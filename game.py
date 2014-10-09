@@ -19,18 +19,30 @@ class Rock(GameElement):
 
 class Door(GameElement):
     IMAGE = "DoorClosed"
-    # IMAGE = "DoorOpen"
     SOLID = True
 
+    def interact(self, player): 
+        player.inventory.append(self)
+        if self.SOLID == False:
+            GAME_BOARD.draw_msg("You are at a door! You unlocked it!")
+ 
+class Troll(GameElement):
+    IMAGE = "Bug"
+    SOLID = True
+    direction =1
 
-    def change_door_state(self): 
-        if IMAGE == "DoorClosed" and self.x == 7 and self.y == 6:
-            IMAGE = "DoorOpen"
-            # if key in player.inventory:
+    def update(self, dt):
 
+        next_x = self.x + self.direction
 
+        if next_x < 0 or next_x >= self.board.width:
+            self.direction *= -1
+            next_x = self.x
 
+        self.board.del_el(self.x, self.y)
+        self.board.set_el(next_x, self.y, self)
 
+      
 class Gem(GameElement):
     IMAGE = "BlueGem"
     SOLID = False
@@ -46,6 +58,7 @@ class Key(GameElement):
     def interact(self,player):
         player.inventory.append(self)
         GAME_BOARD.draw_msg("You just acquired the key! It unlocks things! But what things?")
+        Door.SOLID = False
 
 class Character(GameElement):
     IMAGE = "Girl"
@@ -105,7 +118,11 @@ def initialize():
             (2, 1),
             (1, 2),
             (3, 2),
-            (2, 3) 
+            (2, 3),
+            (6, 4),
+            (8, 2),
+            (2, 5),
+            (7, 8), 
         ]
 
     rocks = []
@@ -116,26 +133,11 @@ def initialize():
         GAME_BOARD.set_el(pos[0], pos[1], rock)
         rocks.append(rock)
 
-    rocks[-1].SOLID = False
+    rocks[3].SOLID = False
 
     for rock in rocks:
         print rock
    
-    # Initialize and register rock 1
-    rock1 = Rock()
-    GAME_BOARD.register(rock1)
-    GAME_BOARD.set_el(1, 1, rock1)
-
-    # Initialize and register rock 2
-    rock2 = Rock()
-    GAME_BOARD.register(rock2)
-    GAME_BOARD.set_el(2, 2, rock2)
-
-    print "The first rock is at", (rock1.x, rock1.y)
-    print "The second rock is at", (rock2.x, rock2.y)
-    print "Rock 1 image", rock1.IMAGE
-    print "Rock 2 image", rock2.IMAGE
-
     # Initialize character
     player = Character()
     GAME_BOARD.register(player)
@@ -145,9 +147,27 @@ def initialize():
     GAME_BOARD.draw_msg("This game is wicked awesome.")
     
     # Initialize gem
-    gem = Gem()
-    GAME_BOARD.register(gem)
-    GAME_BOARD.set_el(3, 1, gem)
+    gem_positions = [
+            (4, 1),
+            (1, 6),
+            (5, 2),
+            (2, 7),
+            (4, 6),
+ 
+        ]
+
+    gems = []
+ 
+    for pos in gem_positions:
+        gem = Gem()
+        GAME_BOARD.register(gem)
+        GAME_BOARD.set_el(pos[0], pos[1], gem)
+        gems.append(gem)
+
+    gems[-1].SOLID = True
+    # gem = Gem()
+    #GAME_BOARD.register(gem)
+    #GAME_BOARD.set_el(3, 1, gem)
 
     # Initialize door
     door = Door()
@@ -158,3 +178,10 @@ def initialize():
     key = Key()
     GAME_BOARD.register(key)
     GAME_BOARD.set_el(2, 8, key)
+
+
+    #Initialize troll
+    troll = Troll()
+    GAME_BOARD.register(troll)
+    GAME_BOARD.set_el(7, 6, troll)
+    troll.update(troll)
