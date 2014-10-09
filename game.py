@@ -83,7 +83,16 @@ class Character(GameElement):
 
         if direction:
             next_location = self.next_pos(direction)
+            print "next_location", next_location[0]
 
+            if next_location[0] < 0 or next_location[0] >= self.board.width:
+                self.board.draw_msg("You cannot go there! Nice try.")
+                next_location = (self.x, self.y)
+            
+            if next_location[1] < 0 or next_location[1] >= self.board.height:
+                self.board.draw_msg("You cannot go there! Nice try.")
+                next_location = (self.x, self.y)
+                            
             if next_location:
                 next_x = next_location[0]
                 next_y = next_location[1]
@@ -100,8 +109,10 @@ class Character(GameElement):
                     self.board.set_el(next_x, next_y, self)
 
     def next_pos(self, direction):
+        print "This is the type that we're looking for:"            
+        #print type(self.x), type(self.y-1)
         if direction == "up": 
-            return (self.x, self.y-1)
+            return (self.x, self.y-1) 
         elif direction == "down": 
             return (self.x, self.y +1)
         elif direction == "left": 
