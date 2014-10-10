@@ -19,18 +19,90 @@ class Rock(GameElement):
 
 class Heart(GameElement):
     IMAGE = "Heart"
+    SOLID = True
 
 class Door(GameElement):
     IMAGE = "DoorClosed"
+
     SOLID = True
+    
+    # def change_image(self, new_image):
+    #     self.IMAGE = new_image
 
     def interact(self, player): 
+        # new_image = "DoorOpen"
         player.inventory.append(self)
+        if self.IMAGE == "DoorClosed":
+            self.change_image("DoorOpen") #make sure the door changes
+            self.board.set_el(self.x, self.y+2, self)
+
         if self.SOLID == False:
             GAME_BOARD.draw_msg("You are at a door! You unlocked it!")
-            self.board.del_el(self.x, self.y)
+            # self.board.del_el(self.x, self.y)
+
+            # self.change_image("DoorOpen")
+            #self.board.set_el(self.x, self.y+2, self)
+
+
+            # if self.IMAGE == "DoorOpen":
+            #     self.SOLID = False
+
+            # if self.IMAGE == "DoorClosed":
+            #     self.change_image("DoorOpen")
+            
+
+             # Initialize heart
+            heart_positions = [
+                    (1, 1),
+                    (1, 2),
+                    (1, 3),
+                    (1, 4),
+                    (1, 5),
+                    (1, 6), 
+                    (1, 8),
+                    (3, 1),
+                    (3, 2),
+                    (3, 3),
+                    (3, 4),
+                    (3, 5),
+                    (3, 6), 
+                    (3, 8),
+                    (5, 1),
+                    (5, 2),
+                    (5, 3),
+                    (5, 4),
+                    (5, 5),
+                    (5, 6), 
+                    (5, 8),
+                    (8, 1),
+                    (8, 2),
+                    (8, 3),
+                    (8, 4),
+                    (8, 5),
+                    (8, 6), 
+                    (8, 8),
+         
+                ]
+
+            hearts = []
+         
+            for pos in heart_positions:
+                heart = Heart()
+                GAME_BOARD.register(heart)
+                GAME_BOARD.set_el(pos[0], pos[1], heart)
+                hearts.append(heart)
+
+            #figure out how to ask if you want to keep playing or quit here
+
+        else:
+            self.board.del_el(player.x, player.y)
+            self.board.set_el(player.x, player.y-5, player)
+        
             #door_open = Door()
  
+ # FIXME: troll disppears randomly
+ # TODO: hre's ghfg kjfdgh jkfdhgjk fdhgkj hfdkjghfdkj
+ # WHY: f gfdkjgh jkfkgj hfkgdfkj kjfkj
 class Troll(GameElement):
     IMAGE = "Bug"
     SOLID = False
@@ -56,30 +128,30 @@ class Troll(GameElement):
         print "You met the troll"
         if len(player.inventory) >=4:
             self.board.del_el(self.x, self.y)
-            # Initialize heart
-            heart_positions = [
-                    (1, 1),
-                    (2, 2),
-                    (3, 3),
-                    (4, 4),
-                    (5, 5),
-                    (6, 6),
-                    (7, 7), 
-                    (8, 8)
+        #     # Initialize heart
+        #     heart_positions = [
+        #             (1, 1),
+        #             (2, 2),
+        #             (3, 3),
+        #             (4, 4),
+        #             (5, 5),
+        #             (6, 6),
+        #             (7, 7), 
+        #             (8, 8)
          
-                ]
+        #         ]
 
-            hearts = []
+        #     hearts = []
          
-            for pos in heart_positions:
-                heart = Heart()
-                GAME_BOARD.register(heart)
-                GAME_BOARD.set_el(pos[0], pos[1], heart)
-                hearts.append(heart)
+        #     for pos in heart_positions:
+        #         heart = Heart()
+        #         GAME_BOARD.register(heart)
+        #         GAME_BOARD.set_el(pos[0], pos[1], heart)
+        #         hearts.append(heart)
 
-        else:
-            self.board.del_el(player.x, player.y)
-            self.board.set_el(player.x, player.y-5, player)
+        # else:
+        #     self.board.del_el(player.x, player.y)
+        #     self.board.set_el(player.x, player.y-5, player)
         
 
 
