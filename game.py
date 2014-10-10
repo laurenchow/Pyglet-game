@@ -17,6 +17,9 @@ class Rock(GameElement):
     IMAGE = "Rock"
     SOLID = True
 
+class Heart(GameElement):
+    IMAGE = "Heart"
+
 class Door(GameElement):
     IMAGE = "DoorClosed"
     SOLID = True
@@ -25,22 +28,60 @@ class Door(GameElement):
         player.inventory.append(self)
         if self.SOLID == False:
             GAME_BOARD.draw_msg("You are at a door! You unlocked it!")
+            self.board.del_el(self.x, self.y)
+            #door_open = Door()
  
 class Troll(GameElement):
     IMAGE = "Bug"
-    SOLID = True
+    SOLID = False
     direction =1
 
+    """
     def update(self, dt):
 
         next_x = self.x + self.direction
 
-        if next_x < 0 or next_x >= self.board.width:
+        if next_x < (self.board.width)/2 or next_x >= self.board.width:
             self.direction *= -1
             next_x = self.x
 
         self.board.del_el(self.x, self.y)
         self.board.set_el(next_x, self.y, self)
+    """
+
+    def interact(self, player):
+        GAME_BOARD.draw_msg("You met a troll! Go back into the woods.")
+  
+
+        print "You met the troll"
+        if len(player.inventory) >=4:
+            self.board.del_el(self.x, self.y)
+            # Initialize heart
+            heart_positions = [
+                    (1, 1),
+                    (2, 2),
+                    (3, 3),
+                    (4, 4),
+                    (5, 5),
+                    (6, 6),
+                    (7, 7), 
+                    (8, 8)
+         
+                ]
+
+            hearts = []
+         
+            for pos in heart_positions:
+                heart = Heart()
+                GAME_BOARD.register(heart)
+                GAME_BOARD.set_el(pos[0], pos[1], heart)
+                hearts.append(heart)
+
+        else:
+            self.board.del_el(player.x, player.y)
+            self.board.set_el(player.x, player.y-5, player)
+        
+
 
       
 class Gem(GameElement):
@@ -50,6 +91,7 @@ class Gem(GameElement):
     def interact(self, player):
         player.inventory.append(self)
         GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!" %(len(player.inventory)))
+       
 
 class Key(GameElement):
     IMAGE = "Key"
@@ -62,6 +104,7 @@ class Key(GameElement):
 
 class Character(GameElement):
     IMAGE = "Girl"
+    SOLID = True
 
     def __init__(self):
         GameElement.__init__(self)
@@ -102,6 +145,10 @@ class Character(GameElement):
                 if existing_el: 
                     existing_el.interact(self)
 
+                
+                # if existing_el=="Bug":
+                #     self.board.del_el(self.x, self.y)
+                #     self.board.set_el(0,0, self)
                 if existing_el and existing_el.SOLID: 
                     self.board.draw_msg("There's something in my way!")
                 elif existing_el is None or not existing_el.SOLID:    
@@ -109,8 +156,6 @@ class Character(GameElement):
                     self.board.set_el(next_x, next_y, self)
 
     def next_pos(self, direction):
-        print "This is the type that we're looking for:"            
-        #print type(self.x), type(self.y-1)
         if direction == "up": 
             return (self.x, self.y-1) 
         elif direction == "down": 
@@ -145,9 +190,6 @@ def initialize():
         rocks.append(rock)
 
     rocks[3].SOLID = False
-
-    for rock in rocks:
-        print rock
    
     # Initialize character
     player = Character()
@@ -175,7 +217,8 @@ def initialize():
         GAME_BOARD.set_el(pos[0], pos[1], gem)
         gems.append(gem)
 
-    gems[-1].SOLID = True
+
+    #gems[-1].SOLID = True
     # gem = Gem()
     #GAME_BOARD.register(gem)
     #GAME_BOARD.set_el(3, 1, gem)
@@ -189,6 +232,7 @@ def initialize():
     key = Key()
     GAME_BOARD.register(key)
     GAME_BOARD.set_el(2, 8, key)
+
 
 
     #Initialize troll
